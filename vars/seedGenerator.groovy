@@ -1,4 +1,6 @@
 import jenkins.model.*
+import javaposse.jobdsl.dsl.DslScriptLoader
+import javaposse.jobdsl.plugin.JenkinsJobManagement
 
 def generateSeedJob(jobName, gitSshUrl, gitRepoUrl, gitBranch, gitCredId, targetSpecifier) {
   // Template Variables:
@@ -98,4 +100,13 @@ def generateSeedJob(jobName, gitSshUrl, gitRepoUrl, gitBranch, gitCredId, target
   def xmlStream = new ByteArrayInputStream(configXML.getBytes())
 
   Jenkins.instance.createProjectFromXML(jobName, xmlStream)
+}
+
+def generateSeedJob_v2(dslScriptPath) {
+  def jobDslScriptFile = new File(dslScriptPath)
+  def workspaceFile = new File('.')
+
+  def jobManagement = new JenkinsJobManagement(System.out, [:], workspaceFile)
+
+  new DslScriptLoader(jobManagement).runScript(jobDslScriptFile.text)
 }
